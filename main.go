@@ -3,7 +3,6 @@ package main
 import (
 	"fmt"
 	"log"
-	"time"
 
 	"github.com/kingtingthegreat/reverse-proxy-server/mock"
 	"github.com/kingtingthegreat/reverse-proxy-server/proxy"
@@ -14,12 +13,12 @@ import (
 const n = 5
 
 func main() {
-	t := time.Minute * 15
-	p := proxy.NewProxyWithServerFuncId(mock.Server, &t)
+	// t := time.Minute * 15
+	p := proxy.NewProxyWithServerFuncId(mock.MockServer, nil)
 
 	fmt.Println("creating a number of subprocesses", n)
 	for _, id := range mock.Id(n) {
-		s := subprocess.Spawn(mock.Server(id))
+		s := subprocess.Spawn(mock.MockServer(id))
 		p.Insert(id, s)
 	}
 

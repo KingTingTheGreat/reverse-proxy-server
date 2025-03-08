@@ -1,11 +1,17 @@
 package mock
 
 import (
+	"log"
 	"net/http"
 )
 
-func Router(id string) *http.ServeMux {
+func MockRouter(id string) *http.ServeMux {
 	router := http.NewServeMux()
+
+	router.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+		log.Println("mock ref", r.Referer())
+		RenderTemplate(w, "home.html", id)
+	})
 
 	router.HandleFunc("/id", func(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusOK)
@@ -15,8 +21,8 @@ func Router(id string) *http.ServeMux {
 	return router
 }
 
-func Server(id string) *http.Server {
-	router := Router(id)
+func MockServer(id string) *http.Server {
+	router := MockRouter(id)
 
 	server := http.Server{
 		Handler: router,

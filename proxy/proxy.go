@@ -20,11 +20,14 @@ type Proxy struct {
 }
 
 func (p *Proxy) Get(id string) *subprocess.Subprocess {
+	if id == "" {
+		return nil
+	}
+
 	p.mu.RLock()
 	defer p.mu.RUnlock()
 
 	v, ok := p.m[id]
-	log.Println("v", v)
 	if !ok {
 		return nil
 	}
@@ -36,6 +39,10 @@ func (p *Proxy) Get(id string) *subprocess.Subprocess {
 }
 
 func (p *Proxy) Insert(id string, sub *subprocess.Subprocess) error {
+	if id == "" {
+		return fmt.Errorf("id must not be empty")
+	}
+
 	p.mu.Lock()
 	defer p.mu.Unlock()
 
@@ -93,6 +100,20 @@ func (p *Proxy) Length() int {
 	defer p.mu.RUnlock()
 
 	return len(p.m)
+}
+
+func (p *Proxy) Keys() []string {
+	p.mu.RLock()
+	defer p.mu.RUnlock()
+
+	i := 0
+	keys := make([]string, len(p.m))
+	for k := range p.m {
+		keys[i] = k
+		i++
+	}
+
+	return keys
 }
 
 func NewProxy(timeout *time.Duration) *Proxy {
