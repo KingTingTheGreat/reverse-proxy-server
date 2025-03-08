@@ -18,7 +18,10 @@ func main() {
 
 	fmt.Println("creating a number of subprocesses", n)
 	for _, id := range mock.Id(n) {
-		s := subprocess.Spawn(mock.MockServer(id))
+		s, err := subprocess.Spawn(mock.MockServer(id))
+		if err != nil {
+			panic("could not spawn subprocess: " + err.Error())
+		}
 		p.Insert(id, s)
 	}
 

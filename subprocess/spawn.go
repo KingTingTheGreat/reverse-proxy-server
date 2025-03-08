@@ -8,7 +8,7 @@ import (
 	"net/url"
 )
 
-func Spawn(s *http.Server) *Subprocess {
+func Spawn(s *http.Server) (*Subprocess, error) {
 	listener, err := net.Listen("tcp", "")
 	if err != nil {
 		panic(err)
@@ -31,13 +31,12 @@ func Spawn(s *http.Server) *Subprocess {
 
 	addr := listener.Addr().(*net.TCPAddr)
 	url := &url.URL{
-		Scheme: "http",
-		Host:   net.JoinHostPort(addr.IP.String(), fmt.Sprintf("%d", addr.Port)),
+		Host: net.JoinHostPort(addr.IP.String(), fmt.Sprintf("%d", addr.Port)),
 	}
 
 	return &Subprocess{
 		Url:    url,
 		Active: active,
 		Kill:   kill,
-	}
+	}, nil
 }

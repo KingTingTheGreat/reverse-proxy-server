@@ -25,9 +25,15 @@ func SpawnHandler(p *proxy.Proxy) func(http.ResponseWriter, *http.Request) {
 		} else {
 			s = p.Server
 		}
-		subprocess := subprocess.Spawn(s)
 
-		err := p.Insert(id, subprocess)
+		subprocess, err := subprocess.Spawn(s)
+		if err != nil {
+			w.WriteHeader(http.StatusInternalServerError)
+			w.Write([]byte("could not create subprocess. try again later"))
+			return
+		}
+
+		err = p.Insert(id, subprocess)
 		if err != nil {
 			w.WriteHeader(http.StatusConflict)
 			w.Write([]byte("this id already exists"))
