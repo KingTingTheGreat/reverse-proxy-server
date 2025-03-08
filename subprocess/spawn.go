@@ -9,7 +9,7 @@ import (
 )
 
 func Spawn(s *http.Server) *Subprocess {
-	listener, err := net.Listen("tcp", "127.0.0.1:0")
+	listener, err := net.Listen("tcp", "")
 	if err != nil {
 		panic(err)
 	}
